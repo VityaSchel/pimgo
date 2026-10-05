@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang=en>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width">
+<title>pimgo</title>
+<style>
+:root{color-scheme:light dark;font:14px system-ui}
+body{margin:0}
+#pick{position:fixed;inset:0;border:0;background:none;font:inherit;color:inherit;cursor:pointer}
+body:has(figure) #pick{display:none}
+main{display:flex;flex-wrap:wrap;gap:8px;max-width:1224px;margin:auto;padding:16px 8px}
+figure{display:flex;flex-direction:column;gap:4px;width:300px;height:300px;margin:0;padding:4px;box-sizing:border-box;background:#8883;border-radius:8px}
+figure div{flex:1;position:relative}
+figure:has(input) div{cursor:pointer}
+figure:has(input) div:hover::after{content:var(--label,"copy URL");position:absolute;inset:0;display:grid;place-items:center;border-radius:4px;background:#0009;color:#fff}
+.copied{--label:"copied"}
+img{position:absolute;inset:0;margin:auto;max-width:100%;max-height:100%;background:repeating-conic-gradient(#8886 0 25%,#0000 0 50%) 0 0/16px 16px}
+span,input{height:20px;border:0;border-radius:4px;padding:0 4px;font:12px/20px ui-monospace,monospace;color:inherit;background:#8886}
+input{background:none}
+</style>
+<button id=pick>Select, drop or paste image</button>
+<input id=picker type=file accept=image/png,image/jpeg,image/webp multiple hidden>
+<main id=grid></main>
+<script>
+const upload = async file => {
+	const tile = document.createElement('figure')
+	tile.innerHTML = `<div><img src="${URL.createObjectURL(file)}" alt=""></div><span></span>`
+	const [preview, span] = tile.children
+	grid.append(tile)
+	try {
+		const res = await fetch('/', {method: 'POST', body: file})
+		const text = await res.text()
+		if (!res.ok) throw text
+		const input = Object.assign(document.createElement('input'), {readOnly: true, value: new URL(text, location).href})
+		span.replaceWith(input)
+		preview.onclick = () => navigator.clipboard.writeText(input.value).then(() => preview.className = 'copied')
+		preview.onmouseleave = () => preview.className = ''
+		if (tile === grid.lastChild) input.select()
+	} catch (err) {
+		span.textContent = err
+	}
+}
+const uploadAll = files => [...files].forEach(upload)
+pick.onclick = () => picker.click()
+picker.onchange = () => uploadAll(picker.files)
+onpaste = e => uploadAll(e.clipboardData.files)
+ondragover = e => e.preventDefault()
+ondrop = e => (e.preventDefault(), uploadAll(e.dataTransfer.files))
+</script>
