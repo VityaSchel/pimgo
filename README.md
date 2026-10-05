@@ -6,7 +6,7 @@ paste image in browser → pimgo converts to avif and strips metadata → you ge
 
 ## Install & setup
 
-1. [Download server binary](https://git.hloth.dev/hloth/pimgo/releases) *(12 MB)*
+1. [Download server binary](https://git.hloth.dev/hloth/pimgo/releases) *(10 MB)*
 2. Run it, e.g `pimgo --listen 127.0.0.1:3000 --dir /srv/my-files/`
 3. Configure your web server to proxy `/` → `127.0.0.1:3000`, rest → `/srv/my-files`
 
