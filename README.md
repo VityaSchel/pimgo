@@ -1,6 +1,8 @@
 # pimgo
 
-*paste · image · go*
+*paste · image · go* — ultra lightweight web image hosting
+
+![Demo](https://i.hloth.dev/4b8a342748fdbda62001a1758fb48837.avif)
 
 paste image in browser → pimgo converts to avif and strips metadata → you get a static file link on your server
 
