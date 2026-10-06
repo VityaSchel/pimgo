@@ -82,8 +82,13 @@ func main() {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		img, format, err := image.Decode(bytes.NewReader(data))
+		_, format, err := image.DecodeConfig(bytes.NewReader(data))
 		if err != nil || !slices.Contains(formats, format) {
+			http.Error(w, "unsupported image", http.StatusUnsupportedMediaType)
+			return
+		}
+		img, _, err := image.Decode(bytes.NewReader(data))
+		if err != nil {
 			http.Error(w, "unsupported image", http.StatusUnsupportedMediaType)
 			return
 		}
