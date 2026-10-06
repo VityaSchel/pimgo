@@ -55,6 +55,10 @@ func main() {
 	listen := flag.String("listen", "127.0.0.1:3000", "listen address, ignored under systemd socket activation")
 	flag.Parse()
 
+	if err := avif.Dynamic(); err != nil {
+		log.Print("falling back to slower WASM encoder: ", err)
+	}
+
 	root, err := os.OpenRoot(*dir)
 	if err != nil {
 		log.Fatal(err)

@@ -8,9 +8,18 @@ paste image in browser → pimgo converts to avif and strips metadata → you ge
 
 ## Install & setup
 
-1. [Download server binary](https://git.hloth.dev/hloth/pimgo/releases) *(10 MB)*
+1. [Download server binary](https://git.hloth.dev/hloth/pimgo/releases) *(10 MB, needs glibc or `gcompat`)*
 2. Run it, e.g `pimgo --listen 127.0.0.1:3000 --dir /srv/my-files/`
 3. Configure your web server to proxy `/` → `127.0.0.1:3000`, rest → `/srv/my-files`
+
+<details>
+<summary><b>Optional:</b> install libavif ≥ 1.1 for ~9× faster encoding</summary>
+
+- Debian 13+/Ubuntu 26.04+/Alpine 3.22+: `libavif-dev`
+- Arch Linux: `libavif`
+- Fedora/openSUSE: `libavif-devel`
+
+</details>
 
 <details>
 <summary>How to: serve with <b>Caddy</b> (recommended)</summary>
@@ -23,7 +32,7 @@ img.yourdomain.org {
 		me HASH
 	}
 	reverse_proxy / 127.0.0.1:3000
-	# OR: reverse_proxy unix//run/pimgo.sock
+	# OR: reverse_proxy / unix//run/pimgo.sock
 	file_server
 }
 ```
@@ -192,5 +201,7 @@ UMask=0022
 Builds are reproducible.
 
 ```sh
-CGO_ENABLED=0 GOTOOLCHAIN=go1.27.1 go build -trimpath -buildvcs=false -tags nodynamic -ldflags='-s -w'
+CGO_ENABLED=0 GOTOOLCHAIN=go1.27.1 go build -trimpath -buildvcs=false -ldflags='-s -w'
 ```
+
+Add `-tags nodynamic` for a fully static binary that never loads libavif (musl without gcompat, NixOS).
