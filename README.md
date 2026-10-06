@@ -21,6 +21,7 @@ img.yourdomain.org {
 		me HASH
 	}
 	reverse_proxy / 127.0.0.1:3000
+	# OR: reverse_proxy unix//run/pimgo.sock
 	file_server
 }
 ```
